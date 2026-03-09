@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LandMart – Buy & Sell Property</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white: #ffffff;
+  --off: #f7f6f2;
+  --cream: #f0ede4;
+  --green: #1a6b3a;
+  --green2: #2d8a52;
+  --green-light: #e8f5ee;
+  --text: #1a1a2e;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --shadow: 0 4px 24px rgba(0,0,0,0.07);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.12);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Outfit', sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; width: 100%; z-index: 100;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 5%;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 68px;
+}
+.logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: var(--green); letter-spacing: -0.5px; }
+.logo span { color: var(--text); }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { text-decoration: none; color: var(--muted); font-weight: 500; font-size: 0.95rem; transition: color 0.2s; }
+.nav-links a:hover { color: var(--green); }
+.nav-btns { display: flex; gap: 0.8rem; align-items: center; }
+.btn-outline { padding: 0.5rem 1.2rem; border: 1.5px solid var(--green); color: var(--green); border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 500; cursor: pointer; background: transparent; transition: all 0.2s; }
+.btn-outline:hover { background: var(--green); color: white; }
+.btn-primary { padding: 0.55rem 1.3rem; background: var(--green); color: white; border: none; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.btn-primary:hover { background: var(--green2); transform: translateY(-1px); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  background: var(--off);
+  display: flex; align-items: center;
+  padding: 100px 5% 60px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -100px; right: -100px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(26,107,58,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero::after {
+  content: '';
+  position: absolute; bottom: -50px; left: 20%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(26,107,58,0.05) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-content { max-width: 580px; position: relative; z-index: 1; animation: fadeUp 0.8s ease both; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: var(--green-light); color: var(--green);
+  padding: 0.4rem 1rem; border-radius: 100px;
+  font-size: 0.85rem; font-weight: 500; margin-bottom: 1.5rem;
+}
+.hero-badge::before { content: '●'; font-size: 0.5rem; }
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 5vw, 3.8rem);
+  line-height: 1.15; font-weight: 700;
+  margin-bottom: 1.2rem;
+  letter-spacing: -1px;
+}
+h1 em { font-style: italic; color: var(--green); }
+.hero p { font-size: 1.1rem; color: var(--muted); line-height: 1.7; margin-bottom: 2rem; font-weight: 300; }
+.hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
+.btn-big { padding: 0.85rem 2rem; border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.25s; }
+.btn-big-primary { background: var(--green); color: white; border: none; }
+.btn-big-primary:hover { background: var(--green2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,107,58,0.3); }
+.btn-big-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+.btn-big-outline:hover { border-color: var(--green); color: var(--green); }
+.hero-stats { display: flex; gap: 2.5rem; }
+.stat-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--text); }
+.stat-label { font-size: 0.8rem; color: var(--muted); font-weight: 400; }
+
+/* SEARCH BAR */
+.search-section { padding: 0 5%; margin-top: -30px; position: relative; z-index: 10; }
+.search-box {
+  background: white;
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  padding: 1.5rem 2rem;
+  display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
+  border: 1px solid var(--border);
+}
+.search-field { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; min-width: 160px; }
+.search-field label { font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.search-field select, .search-field input {
+  border: none; outline: none; font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem; font-weight: 500; color: var(--text);
+  background: transparent; cursor: pointer;
+}
+.search-divider { width: 1px; height: 40px; background: var(--border); }
+.search-btn { padding: 0.8rem 2rem; background: var(--green); color: white; border: none; border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+.search-btn:hover { background: var(--green2); }
+
+/* LISTINGS */
+.section { padding: 80px 5%; }
+.section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2.5rem; }
+.section-tag { font-size: 0.8rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+.section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 600; letter-spacing: -0.5px; }
+.view-all { color: var(--green); font-weight: 500; font-size: 0.9rem; text-decoration: none; border-bottom: 1px solid var(--green); padding-bottom: 2px; }
+
+.listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+
+.card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+  cursor: pointer;
+  animation: fadeUp 0.6s ease both;
+}
+.card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: transparent; }
+.card-img {
+  width: 100%; height: 200px;
+  object-fit: cover; display: block;
+  background: var(--cream);
+  position: relative; overflow: hidden;
+}
+.card-img-placeholder {
+  width: 100%; height: 200px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3rem;
+  position: relative;
+}
+.land-img { background: linear-gradient(135deg, #c8e6c9, #a5d6a7); }
+.house-img { background: linear-gradient(135deg, #bbdefb, #90caf9); }
+.card-badge {
+  position: absolute; top: 12px; left: 12px;
+  background: white; color: var(--green);
+  padding: 0.3rem 0.75rem; border-radius: 100px;
+  font-size: 0.75rem; font-weight: 600;
+}
+.card-badge.sale { color: #e65100; }
+.card-body { padding: 1.2rem; }
+.card-price { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--green); margin-bottom: 0.3rem; }
+.card-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.3rem; }
+.card-location { color: var(--muted); font-size: 0.85rem; display: flex; align-items: center; gap: 0.3rem; margin-bottom: 1rem; }
+.card-features { display: flex; gap: 1rem; }
+.feature { font-size: 0.8rem; color: var(--muted); display: flex; align-items: center; gap: 0.3rem; }
+.card-footer { padding: 0.8rem 1.2rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.seller { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--muted); }
+.seller-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: var(--green); }
+.contact-btn { font-size: 0.8rem; font-weight: 600; color: var(--green); border: 1px solid var(--green); padding: 0.3rem 0.8rem; border-radius: 6px; cursor: pointer; background: transparent; transition: all 0.2s; }
+.contact-btn:hover { background: var(--green); color: white; }
+
+/* SELL SECTION */
+.sell-section {
+  margin: 0 5% 80px;
+  background: linear-gradient(135deg, var(--green) 0%, #0d4a27 100%);
+  border-radius: 24px;
+  padding: 60px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+  position: relative; overflow: hidden;
+}
+.sell-section::before {
+  content: '';
+  position: absolute; top: -50px; right: -50px;
+  width: 300px; height: 300px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 50%;
+}
+.sell-section::after {
+  content: '';
+  position: absolute; bottom: -80px; right: 100px;
+  width: 200px; height: 200px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
+}
+.sell-content { position: relative; z-index: 1; }
+.sell-tag { font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; }
+.sell-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; color: white; line-height: 1.2; margin-bottom: 1rem; }
+.sell-desc { color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 1.5rem; font-weight: 300; }
+.btn-white { padding: 0.85rem 2rem; background: white; color: var(--green); border: none; border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+
+/* UPLOAD FORM */
+.upload-form {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 16px;
+  padding: 2rem;
+  position: relative; z-index: 1;
+}
+.upload-form h3 { color: white; font-size: 1.1rem; font-weight: 600; margin-bottom: 1.2rem; }
+.form-group { margin-bottom: 1rem; }
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.form-group input::placeholder { color: rgba(255,255,255,0.5); }
+.form-group select option { color: var(--text); background: white; }
+.form-group input:focus, .form-group select:focus { border-color: rgba(255,255,255,0.5); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.upload-area {
+  border: 2px dashed rgba(255,255,255,0.3);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 1rem;
+}
+.upload-area:hover { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.05); }
+.upload-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+.upload-text { color: rgba(255,255,255,0.7); font-size: 0.85rem; }
+.upload-text strong { color: white; }
+#fileInput { display: none; }
+
+/* HOW IT WORKS */
+.how-section { background: var(--off); padding: 80px 5%; }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; margin-top: 3rem; }
+.step { text-align: center; animation: fadeUp 0.6s ease both; }
+.step-num {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--green); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700;
+  margin: 0 auto 1rem;
+}
+.step h3 { font-weight: 600; margin-bottom: 0.5rem; }
+.step p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; font-weight: 300; }
+
+/* FOOTER */
+footer {
+  background: var(--text);
+  color: rgba(255,255,255,0.7);
+  padding: 60px 5% 30px;
+}
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+.footer-brand .logo { color: white; margin-bottom: 1rem; display: block; }
+.footer-brand p { font-size: 0.9rem; line-height: 1.7; font-weight: 300; }
+.footer-col h4 { color: white; font-weight: 600; margin-bottom: 1rem; font-size: 0.95rem; }
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 0.6rem; }
+.footer-col ul li a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+.footer-col ul li a:hover { color: white; }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+
+/* MODAL */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+  z-index: 1000; align-items: center; justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: white; border-radius: 20px;
+  padding: 2.5rem; max-width: 500px; width: 90%;
+  animation: scaleIn 0.3s ease;
+}
+.modal h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 0.5rem; }
+.modal p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+.modal-form input {
+  width: 100%; padding: 0.75rem 1rem; margin-bottom: 0.8rem;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  font-family: 'Outfit', sans-serif; font-size: 0.95rem; outline: none;
+  transition: border 0.2s;
+}
+.modal-form input:focus { border-color: var(--green); }
+.modal-btns { display: flex; gap: 0.8rem; margin-top: 0.5rem; }
+.modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--muted); }
+.modal { position: relative; }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.2s; }
+.card:nth-child(4) { animation-delay: 0.3s; }
+.card:nth-child(5) { animation-delay: 0.4s; }
+.card:nth-child(6) { animation-delay: 0.5s; }
+
+/* WHATSAPP FLOAT */
+.whatsapp-float {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 0.6rem;
+}
+.whatsapp-btn {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: #25D366; color: white; border: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; cursor: pointer; box-shadow: 0 4px 20px rgba(37,211,102,0.5);
+  transition: all 0.3s; animation: pulse 2s infinite;
+  text-decoration: none;
+}
+.whatsapp-btn:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37,211,102,0.7); }
+.whatsapp-tooltip {
+  background: var(--text); color: white;
+  padding: 0.5rem 1rem; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 500; white-space: nowrap;
+  opacity: 0; transform: translateX(10px); transition: all 0.3s;
+  pointer-events: none;
+}
+.whatsapp-float:hover .whatsapp-tooltip { opacity: 1; transform: translateX(0); }
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(37,211,102,0.5); }
+  50% { box-shadow: 0 4px 32px rgba(37,211,102,0.8); }
+}
+
+/* CONTACT BANNER */
+.contact-banner {
+  background: var(--green-light);
+  border-top: 1px solid #b7dfc6;
+  border-bottom: 1px solid #b7dfc6;
+  padding: 1rem 5%;
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.5rem; flex-wrap: wrap; text-align: center;
+}
+.contact-banner p { color: var(--green); font-weight: 500; font-size: 0.95rem; }
+.whatsapp-link {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: #25D366; color: white; text-decoration: none;
+  padding: 0.6rem 1.4rem; border-radius: 8px;
+  font-weight: 600; font-size: 0.9rem; transition: all 0.2s;
+}
+.whatsapp-link:hover { background: #1da851; transform: translateY(-1px); }
+.form-link {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: var(--green); color: white; text-decoration: none;
+  padding: 0.6rem 1.4rem; border-radius: 8px;
+  font-weight: 600; font-size: 0.9rem; transition: all 0.2s;
+}
+.form-link:hover { background: var(--green2); transform: translateY(-1px); }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero { padding: 100px 5% 40px; }
+  .hero-stats { gap: 1.5rem; }
+  .search-box { flex-direction: column; }
+  .search-divider { display: none; }
+  .sell-section { grid-template-columns: 1fr; padding: 40px 24px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Land<span>Mart</span></div>
+  <ul class="nav-links">
+    <li><a href="#listings">Browse</a></li>
+    <li><a href="#sell">Sell Property</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#legal">Legal Help</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <div class="nav-btns">
+    <button class="btn-outline" onclick="openModal('login')">Log In</button>
+    <button class="btn-primary" onclick="openModal('signup')">Sign Up</button>
+  </div>
+</nav>
+
+<!-- CONTACT BANNER -->
+<div class="contact-banner">
+  <p>📞 Got questions? We're here to help buyers & sellers!</p>
+  <a href="https://wa.me/916900218069?text=Hi%20LandMart!%20I%20am%20interested%20in%20buying%20or%20selling%20property." class="whatsapp-link" target="_blank">
+    💬 WhatsApp Us
+  </a>
+  <a href="https://forms.google.com" class="form-link" target="_blank">
+    🏠 List Your Property
+  </a>
+  <a href="https://forms.google.com" class="form-link" style="background:#2979ff;" target="_blank">
+    🔍 Find Property
+  </a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">🌿 India's Trusted Property Marketplace</div>
+    <h1>Find Your Perfect <em>Land</em> or Property</h1>
+    <p>Connect directly with verified sellers. Browse land plots, houses, and apartments across India — no middlemen, no hidden fees.</p>
+    <div class="hero-btns">
+      <button class="btn-big btn-big-primary" onclick="document.getElementById('listings').scrollIntoView({behavior:'smooth'})">Browse Listings</button>
+      <button class="btn-big btn-big-outline" onclick="document.getElementById('sell').scrollIntoView({behavior:'smooth'})">List Your Property</button>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">2,400+</div>
+        <div class="stat-label">Active Listings</div>
+      </div>
+      <div>
+        <div class="stat-num">840+</div>
+        <div class="stat-label">Verified Sellers</div>
+      </div>
+      <div>
+        <div class="stat-num">98%</div>
+        <div class="stat-label">Satisfaction Rate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEARCH -->
+<div class="search-section">
+  <div class="search-box">
+    <div class="search-field">
+      <label>Property Type</label>
+      <select>
+        <option>All Types</option>
+        <option>Land Plot</option>
+        <option>House</option>
+        <option>Apartment</option>
+      </select>
+    </div>
+    <div class="search-divider"></div>
+    <div class="search-field">
+      <label>Location</label>
+      <input type="text" placeholder="City, State or PIN...">
+    </div>
+    <div class="search-divider"></div>
+    <div class="search-field">
+      <label>Budget</label>
+      <select>
+        <option>Any Price</option>
+        <option>Under ₹10L</option>
+        <option>₹10L – ₹50L</option>
+        <option>₹50L – ₹1Cr</option>
+        <option>Above ₹1Cr</option>
+      </select>
+    </div>
+    <div class="search-divider"></div>
+    <div class="search-field">
+      <label>Size</label>
+      <select>
+        <option>Any Size</option>
+        <option>Under 500 sq.ft</option>
+        <option>500–2000 sq.ft</option>
+        <option>2000–5000 sq.ft</option>
+        <option>Above 5000 sq.ft</option>
+      </select>
+    </div>
+    <button class="search-btn">🔍 Search</button>
+  </div>
+</div>
+
+<!-- LISTINGS -->
+<section class="section" id="listings">
+  <div class="section-header">
+    <div>
+      <div class="section-tag">Latest Properties</div>
+      <div class="section-title">Fresh Listings Near You</div>
+    </div>
+    <a href="#" class="view-all">View all listings →</a>
+  </div>
+  <div class="listings-grid">
+
+    <div class="card">
+      <div class="card-img-placeholder land-img">
+        <span>🌾</span>
+        <div class="card-badge">Land Plot</div>
+      </div>
+      <div class="card-body">
+        <div class="card-price">₹18,50,000</div>
+        <div class="card-title">Agricultural Land – Fertile Soil</div>
+        <div class="card-location">📍 Nashik, Maharashtra</div>
+        <div class="card-features">
+          <div class="feature">📐 2 Acres</div>
+          <div class="feature">🌊 Water Source</div>
+          <div class="feature">🛣️ Road Access</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="seller"><div class="seller-avatar">RK</div> Rajesh Kumar</div>
+        <button class="contact-btn" onclick="window.open('https://wa.me/916900218069?text=Hi%20LandMart!%20I%20am%20interested%20in%20the%20Agricultural%20Land%20in%20Nashik.','_blank')">Contact</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img-placeholder house-img">
+        <span>🏡</span>
+        <div class="card-badge sale">For Sale</div>
+      </div>
+      <div class="card-body">
+        <div class="card-price">₹65,00,000</div>
+        <div class="card-title">3BHK Independent House</div>
+        <div class="card-location">📍 Pune, Maharashtra</div>
+        <div class="card-features">
+          <div class="feature">🛏️ 3 Beds</div>
+          <div class="feature">🚿 2 Baths</div>
+          <div class="feature">📐 1800 sq.ft</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="seller"><div class="seller-avatar">SP</div> Sunita Patel</div>
+        <button class="contact-btn">Contact</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img-placeholder" style="background: linear-gradient(135deg, #ffe0b2, #ffcc80);">
+        <span>🏗️</span>
+        <div class="card-badge">Plot</div>
+      </div>
+      <div class="card-body">
+        <div class="card-price">₹8,75,000</div>
+        <div class="card-title">Residential Plot – Corner Site</div>
+        <div class="card-location">📍 Hyderabad, Telangana</div>
+        <div class="card-features">
+          <div class="feature">📐 1200 sq.ft</div>
+          <div class="feature">✅ Clear Title</div>
+          <div class="feature">🏘️ Gated Area</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="seller"><div class="seller-avatar">AM</div> Arjun Mehta</div>
+        <button class="contact-btn">Contact</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img-placeholder" style="background: linear-gradient(135deg, #e1bee7, #ce93d8);">
+        <span>🏢</span>
+        <div class="card-badge sale">For Sale</div>
+      </div>
+      <div class="card-body">
+        <div class="card-price">₹42,00,000</div>
+        <div class="card-title">2BHK Apartment – City View</div>
+        <div class="card-location">📍 Bengaluru, Karnataka</div>
+        <div class="card-features">
+          <div class="feature">🛏️ 2 Beds</div>
+          <div class="feature">🚿 2 Baths</div>
+          <div class="feature">📐 1100 sq.ft</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="seller"><div class="seller-avatar">PV</div> Priya Verma</div>
+        <button class="contact-btn">Contact</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img-placeholder land-img">
+        <span>🌳</span>
+        <div class="card-badge">Farm Land</div>
+      </div>
+      <div class="card-body">
+        <div class="card-price">₹32,00,000</div>
+        <div class="card-title">Mango Orchard with Well</div>
+        <div class="card-location">📍 Ratnagiri, Maharashtra</div>
+        <div class="card-features">
+          <div class="feature">📐 5 Acres</div>
+          <div class="feature">🥭 Fruit Trees</div>
+          <div class="feature">💧 Bore Well</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="seller"><div class="seller-avatar">DS</div> Dinesh Sawant</div>
+        <button class="contact-btn">Contact</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img-placeholder house-img">
+        <span>🏠</span>
+        <div class="card-badge sale">For Sale</div>
+      </div>
+      <div class="card-body">
+        <div class="card-price">₹95,00,000</div>
+        <div class="card-title">4BHK Villa with Garden</div>
+        <div class="card-location">📍 Chennai, Tamil Nadu</div>
+        <div class="card-features">
+          <div class="feature">🛏️ 4 Beds</div>
+          <div class="feature">🚿 3 Baths</div>
+          <div class="feature">📐 3200 sq.ft</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="seller"><div class="seller-avatar">KN</div> Kavitha Nair</div>
+        <button class="contact-btn">Contact</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SELL SECTION -->
+<section id="sell">
+  <div class="sell-section">
+    <div class="sell-content">
+      <div class="sell-tag">For Sellers</div>
+      <div class="sell-title">List Your Property in Minutes</div>
+      <p class="sell-desc">Upload photos, set your price, and connect with thousands of genuine buyers directly. No commissions, no hassle.</p>
+      <button class="btn-white" onclick="window.open('https://forms.google.com','_blank')">Start Selling Free →</button>
+    </div>
+    <div class="upload-form">
+      <h3>📋 Quick Listing Form</h3>
+      <div class="form-group">
+        <input type="text" placeholder="Property Title (e.g. 2 Acre Farm Land)">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <select>
+            <option value="">Property Type</option>
+            <option>Land Plot</option>
+            <option>House</option>
+            <option>Apartment</option>
+            <option>Farm Land</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="text" placeholder="Price (₹)">
+        </div>
+      </div>
+      <div class="form-group">
+        <input type="text" placeholder="Location (City, State)">
+      </div>
+      <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-icon">📸</div>
+        <div class="upload-text"><strong>Click to upload photos</strong><br>JPG, PNG up to 10MB each</div>
+        <input type="file" id="fileInput" multiple accept="image/*" onchange="handleFiles(this)">
+      </div>
+      <div id="filePreview" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;"></div>
+      <button class="btn-white" style="width:100%;" onclick="alert('Listing submitted! We will review and publish within 24 hours.')">Submit Listing →</button>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div style="text-align:center;">
+    <div class="section-tag" style="display:block;">Simple Process</div>
+    <div class="section-title">How LandMart Works</div>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Create Account</h3>
+      <p>Sign up for free in under 2 minutes. No documents needed to start browsing.</p>
+    </div>
+    <div class="step" style="animation-delay:0.1s">
+      <div class="step-num">2</div>
+      <h3>Browse or List</h3>
+      <p>Search thousands of verified listings or upload your own property with photos.</p>
+    </div>
+    <div class="step" style="animation-delay:0.2s">
+      <div class="step-num">3</div>
+      <h3>Connect Directly</h3>
+      <p>Contact sellers or buyers directly. No middlemen, no hidden commissions.</p>
+    </div>
+    <div class="step" style="animation-delay:0.3s">
+      <div class="step-num">4</div>
+      <h3>Close the Deal</h3>
+      <p>Finalize your property transaction safely with our guided documentation support.</p>
+    </div>
+  </div>
+</section>
+
+<!-- LEGAL HELP SECTION -->
+<section class="section" id="legal" style="background: var(--off);">
+  <div style="text-align:center; margin-bottom:3rem;">
+    <div class="section-tag" style="display:block;">Documentation Guide</div>
+    <div class="section-title">Legal Help & Paperwork Guide</div>
+    <p style="color:var(--muted);max-width:560px;margin:1rem auto 0;font-weight:300;line-height:1.7;">Everything you need to know about property transfer paperwork in India — step by step.</p>
+  </div>
+
+  <div style="max-width:800px;margin:0 auto 4rem;">
+    <div class="legal-step-item">
+      <div class="legal-num">1</div>
+      <div class="legal-content">
+        <h3>Agreement to Sell</h3>
+        <p>Buyer and seller sign a written agreement mentioning price, payment terms, and possession date. Usually done on ₹100–₹500 stamp paper drafted by a lawyer.</p>
+        <div class="legal-tag">⏱ 1–2 days &nbsp;|&nbsp; 💰 ₹2,000–₹5,000 lawyer fee</div>
+      </div>
+    </div>
+    <div class="legal-step-item">
+      <div class="legal-num">2</div>
+      <div class="legal-content">
+        <h3>Due Diligence</h3>
+        <p>Verify the seller truly owns the property. Get an <strong>Encumbrance Certificate</strong> from the Sub-Registrar office and check the <strong>7/12 extract</strong> (land) or <strong>Khata document</strong> to confirm no loans or disputes exist.</p>
+        <div class="legal-tag">⏱ 3–7 days &nbsp;|&nbsp; 💰 ₹500–₹1,000</div>
+      </div>
+    </div>
+    <div class="legal-step-item">
+      <div class="legal-num">3</div>
+      <div class="legal-content">
+        <h3>Sale Deed Drafting</h3>
+        <p>The main legal document that transfers ownership. Must be drafted by a registered lawyer and printed on stamp paper valued at a percentage of the property price.</p>
+        <div class="legal-tag">⏱ 2–3 days &nbsp;|&nbsp; 💰 ₹5,000–₹15,000 lawyer fee</div>
+      </div>
+    </div>
+    <div class="legal-step-item">
+      <div class="legal-num">4</div>
+      <div class="legal-content">
+        <h3>Registration at Sub-Registrar Office</h3>
+        <p>Both buyer and seller visit the Sub-Registrar Office with 2 witnesses. Pay <strong>stamp duty (5–7%)</strong> and <strong>registration fee (~1%)</strong> of the property value. Document gets officially registered. ✅</p>
+        <div class="legal-tag">⏱ 1 day visit &nbsp;|&nbsp; 💰 6–8% of property value</div>
+      </div>
+    </div>
+    <div class="legal-step-item" style="margin-bottom:0;">
+      <div class="legal-num">5</div>
+      <div class="legal-content">
+        <h3>Mutation of Property</h3>
+        <p>Update land records in the buyer's name at the local municipal office or Tehsil. This officially makes you the owner in government records.</p>
+        <div class="legal-tag">⏱ 2–4 weeks &nbsp;|&nbsp; 💰 ₹200–₹500</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:900px;margin:0 auto 4rem;">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;text-align:center;margin-bottom:2rem;">📄 Documents Checklist</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+      <div class="doc-card">
+        <div class="doc-card-header">👤 Both Buyer & Seller</div>
+        <ul class="doc-list">
+          <li>✅ Aadhar Card (original + copy)</li>
+          <li>✅ PAN Card</li>
+          <li>✅ 2 Passport Size Photos</li>
+          <li>✅ Address Proof</li>
+        </ul>
+      </div>
+      <div class="doc-card">
+        <div class="doc-card-header">🏠 Seller Must Provide</div>
+        <ul class="doc-list">
+          <li>✅ Original Title Deed</li>
+          <li>✅ Encumbrance Certificate</li>
+          <li>✅ Property Tax Receipts</li>
+          <li>✅ No Objection Certificate (if applicable)</li>
+          <li>✅ 7/12 Extract or Khata (for land)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:900px;margin:0 auto;">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;text-align:center;margin-bottom:0.5rem;">🤝 Connect With Verified Lawyers</h2>
+    <p style="text-align:center;color:var(--muted);margin-bottom:2rem;font-weight:300;">Our partner lawyers handle your entire paperwork from ₹10,000 onwards</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;">
+      <div class="lawyer-card">
+        <div class="lawyer-avatar">AK</div>
+        <h4>Adv. Anil Kumar</h4>
+        <p>Property Law Specialist</p>
+        <div class="lawyer-loc">📍 Mumbai, Maharashtra</div>
+        <div class="lawyer-exp">⭐ 4.9 &nbsp;|&nbsp; 12 years exp.</div>
+        <button class="contact-btn" style="width:100%;margin-top:0.8rem;padding:0.5rem;" onclick="alert('Connecting you with Adv. Anil Kumar...')">Contact Lawyer</button>
+      </div>
+      <div class="lawyer-card">
+        <div class="lawyer-avatar">SR</div>
+        <h4>Adv. Sheela Rao</h4>
+        <p>Land & Revenue Expert</p>
+        <div class="lawyer-loc">📍 Bengaluru, Karnataka</div>
+        <div class="lawyer-exp">⭐ 4.8 &nbsp;|&nbsp; 9 years exp.</div>
+        <button class="contact-btn" style="width:100%;margin-top:0.8rem;padding:0.5rem;" onclick="alert('Connecting you with Adv. Sheela Rao...')">Contact Lawyer</button>
+      </div>
+      <div class="lawyer-card">
+        <div class="lawyer-avatar">PM</div>
+        <h4>Adv. Prashant Mehta</h4>
+        <p>Registration Specialist</p>
+        <div class="lawyer-loc">📍 Pune, Maharashtra</div>
+        <div class="lawyer-exp">⭐ 4.7 &nbsp;|&nbsp; 15 years exp.</div>
+        <button class="contact-btn" style="width:100%;margin-top:0.8rem;padding:0.5rem;" onclick="alert('Connecting you with Adv. Prashant Mehta...')">Contact Lawyer</button>
+      </div>
+    </div>
+    <div style="background:var(--green-light);border:1px solid #b7dfc6;border-radius:12px;padding:1.2rem 1.5rem;margin-top:2rem;display:flex;gap:1rem;align-items:flex-start;">
+      <span style="font-size:1.5rem;">⚠️</span>
+      <p style="font-size:0.9rem;color:var(--green);line-height:1.6;"><strong>Important:</strong> Always hire a local property lawyer before signing any documents. Property laws vary by state in India. LandMart connects you with lawyers but is not a legal service provider.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+.legal-step-item { display:flex;gap:1.5rem;margin-bottom:2rem;background:white;border-radius:16px;padding:1.5rem;border:1px solid var(--border);transition:box-shadow 0.2s; }
+.legal-step-item:hover { box-shadow:var(--shadow); }
+.legal-num { width:44px;height:44px;min-width:44px;background:var(--green);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700; }
+.legal-content h3 { font-weight:600;margin-bottom:0.4rem; }
+.legal-content p { color:var(--muted);font-size:0.92rem;line-height:1.7;font-weight:300;margin-bottom:0.6rem; }
+.legal-tag { font-size:0.78rem;color:var(--green);background:var(--green-light);display:inline-block;padding:0.25rem 0.75rem;border-radius:100px;font-weight:500; }
+.doc-card { background:white;border:1px solid var(--border);border-radius:14px;overflow:hidden; }
+.doc-card-header { background:var(--green);color:white;padding:0.8rem 1.2rem;font-weight:600;font-size:0.95rem; }
+.doc-list { list-style:none;padding:1rem 1.2rem;display:flex;flex-direction:column;gap:0.6rem; }
+.doc-list li { font-size:0.9rem;color:var(--text); }
+.lawyer-card { background:white;border:1px solid var(--border);border-radius:14px;padding:1.5rem;text-align:center;transition:all 0.2s; }
+.lawyer-card:hover { box-shadow:var(--shadow);transform:translateY(-4px); }
+.lawyer-avatar { width:56px;height:56px;border-radius:50%;background:var(--green);color:white;font-weight:700;font-size:1.1rem;display:flex;align-items:center;justify-content:center;margin:0 auto 0.8rem; }
+.lawyer-card h4 { font-weight:600;margin-bottom:0.2rem; }
+.lawyer-card p { color:var(--muted);font-size:0.85rem;margin-bottom:0.5rem; }
+.lawyer-loc { font-size:0.82rem;color:var(--muted);margin-bottom:0.3rem; }
+.lawyer-exp { font-size:0.82rem;color:var(--green);font-weight:500; }
+</style>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="logo">Land<span style="color:rgba(255,255,255,0.5)">Mart</span></span>
+      <p>India's trusted marketplace to buy and sell land, plots, houses and apartments directly between owners and buyers.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Browse</h4>
+      <ul>
+        <li><a href="#">Land Plots</a></li>
+        <li><a href="#">Houses</a></li>
+        <li><a href="#">Apartments</a></li>
+        <li><a href="#">Farm Land</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Sellers</h4>
+      <ul>
+        <li><a href="#">List Property</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Seller Tips</a></li>
+        <li><a href="#">Dashboard</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Use</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 LandMart. All rights reserved.</span>
+    <span>Made with ❤️ for Indian property buyers & sellers</span>
+  </div>
+</footer>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('login')">×</button>
+    <h2>Welcome Back</h2>
+    <p>Log in to your LandMart account</p>
+    <div class="modal-form">
+      <input type="email" placeholder="Email address">
+      <input type="password" placeholder="Password">
+      <div class="modal-btns">
+        <button class="btn-primary" style="flex:1;padding:0.75rem;" onclick="alert('Login successful!')">Log In</button>
+      </div>
+      <p style="text-align:center;margin-top:1rem;font-size:0.85rem;color:var(--muted)">Don't have an account? <a href="#" style="color:var(--green)" onclick="closeModal('login');openModal('signup')">Sign up free</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNUP MODAL -->
+<div class="modal-overlay" id="signupModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('signup')">×</button>
+    <h2>Join LandMart</h2>
+    <p>Create your free account today</p>
+    <div class="modal-form">
+      <input type="text" placeholder="Full name">
+      <input type="email" placeholder="Email address">
+      <input type="tel" placeholder="Phone number">
+      <input type="password" placeholder="Create password">
+      <div class="modal-btns">
+        <button class="btn-primary" style="flex:1;padding:0.75rem;" onclick="alert('Account created! Welcome to LandMart 🎉')">Create Account</button>
+      </div>
+      <p style="text-align:center;margin-top:1rem;font-size:0.85rem;color:var(--muted)">Already have an account? <a href="#" style="color:var(--green)" onclick="closeModal('signup');openModal('login')">Log in</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING WHATSAPP -->
+<div class="whatsapp-float">
+  <div class="whatsapp-tooltip">Chat with us on WhatsApp!</div>
+  <a class="whatsapp-btn" href="https://wa.me/916900218069?text=Hi%20LandMart!%20I%20want%20to%20buy%20or%20sell%20property." target="_blank">💬</a>
+</div>
+
+<script>
+function openModal(type) {
+  document.getElementById(type + 'Modal').classList.add('active');
+}
+function closeModal(type) {
+  document.getElementById(type + 'Modal').classList.remove('active');
+}
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('active');
+  });
+});
+
+function handleFiles(input) {
+  const preview = document.getElementById('filePreview');
+  preview.innerHTML = '';
+  Array.from(input.files).slice(0, 5).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.style.cssText = 'width:60px;height:60px;object-fit:cover;border-radius:8px;border:2px solid rgba(255,255,255,0.3)';
+      preview.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// Scroll animations
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.style.opacity = '1';
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.card, .step').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
